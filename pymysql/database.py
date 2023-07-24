@@ -1,4 +1,5 @@
 import pymysql
+import pandas as pd
 
 
 class MySQL:
@@ -66,6 +67,23 @@ class MySQL:
             # 获取所有结果
             result = self.cursor.fetchall()
             return result
+        except Exception as e:
+            raise e
+        finally:
+            # 关闭游标和连接
+            self.close()
+
+    def fetchall_df(self, sql, params=None):
+        try:
+            # 连接数据库
+            self.connect()
+            # 执行SQL语句
+            self.cursor.execute(sql, params)
+            # 获取所有结果
+            result = self.cursor.fetchall()
+            # 将查询结果转化为 Pandas dataframe 对象
+            df = pd.DataFrame(result, columns=[i[0] for i in self.cursor.description])
+            return df
         except Exception as e:
             raise e
         finally:
